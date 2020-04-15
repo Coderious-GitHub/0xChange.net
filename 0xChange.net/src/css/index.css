@@ -1,0 +1,174 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #FFFFFF;
+}
+
+.grid-container {
+    padding-top: 2px;
+    display: grid;
+    grid-template-columns: 15vw 35vw 35vw 15vw;
+    grid-template-rows: 60vh 34vh;
+    background-color: black;
+}
+
+.cell {
+    background-color: #343a40;
+    height: auto;
+}
+
+.cell-header {
+    height: 4vh;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    padding-left: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #292d32 ;
+}
+
+.order-book {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    margin-right: 2px;
+}
+
+.chart {
+    grid-column: 2 / span 2;
+    grid-row: 1;
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+
+.buy-orders {
+    grid-column: 2;
+    grid-row: 2;
+    margin-right: 2px;
+}
+
+.sell-orders {
+    grid-column: 3;
+    grid-row: 2;
+    margin-right: 2px;
+}
+
+.trades {
+    grid-column: 4;
+    grid-row: 1 ;
+    margin-bottom: 2px;
+}
+
+.info {
+    grid-column: 4;
+    grid-row: 2;
+}
+
+.modal {
+    color: #2D3142;
+}
+
+ul{
+    color: #2D3142;
+}
+
+table {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+th {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: #BFC0C0 ;
+    font-size: 14px;
+    padding-right: 5px !important;
+    color: #2D3142;
+}
+
+thead {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: #BFC0C0;
+    font-size: 14px;
+    padding-right: 5px !important;
+    color: #2D3142;
+}
+
+tbody {
+    font-size: 12px;
+    color: #BFC0C0;
+}
+
+tr, td {
+    padding: 0 !important;
+    margin: 0 !important;
+    padding-right: 5px !important;
+    text-align: right;
+}
+
+.mid-row {
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 14px;
+    color: #2D3142;
+    background-color: #BFC0C0;
+}
+
+.buy-order{
+    color: #008000; 
+}
+
+.sell-order{
+    color: #cc3300;
+}
+
+.cancel {
+    padding-bottom: 0 !important
+}
+
+.popover{
+    max-width: 30vw; /* Max Width of the popover (depending on the container!) */
+}
+
+.popover-header {
+    background-color: #BFC0C0;
+    color: white;
+  }
+
+#chart {
+    width: 100%;
+    height: 55vh;
+}
+
+.row.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+ }
+ .row.no-gutters > [class^="col-"],
+ .row.no-gutters > [class*=" col-"] {
+    padding-right: 0;
+    padding-left: 0;
+ }
+
+ /*Scrollbarr settings*/
+ /* width */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #FFFFFF; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #BFC0C0; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #2D3142; 
+}
+
+

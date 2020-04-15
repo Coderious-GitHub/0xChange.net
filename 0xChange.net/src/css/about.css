@@ -1,0 +1,23 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #BFC0C0;
+}
+
+.jumbotron {
+    color:#EF8354;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.footer {
+    color:#EF8354;
+    box-shadow: 0 -4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#about {
+    background-color: #BFC0C0;
+    color:#2D3142;
+}

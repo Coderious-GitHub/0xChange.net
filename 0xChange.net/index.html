@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="./src/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="./src/css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="./src/css/style.css" rel="stylesheet">
+    <!-- MDBootstrap Datatables  -->
+    <link href="./src/css/addons/datatables.min.css" rel="stylesheet">
+
+    <!--Personal resources-->
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <script type="text/javascript" src="./src/js/web3setup.js"></script>
+    <script type="text/javascript" src="./src/js/index.js"></script>
+    <script type="text/javascript" src="./src/js/utils.js"></script>
+    <script type="text/javascript" src="./src/js/async.js"></script>
+    <script type="text/javascript" src="./src/js/fetchOrders.js"></script>
+    <link rel="stylesheet" href="./src/css/index.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <!-- AmChart Resources -->
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/amstock.js"></script>
+    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+    <title>0xChange.net</title>
+
+</head>
+
+<body class="bg-dark" onload="welcome()">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:white; height: 5vh;">
+        <a class="navbar-brand" href="https://www.0xchange.net">
+            <img src="./src/img/0xChange-5_with.png" height="40vh">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" style="color:#2D3142" href="about.html">About</a>
+                </li>
+                <li class="nav-item">
+                    <a target="_blank" href="https://discord.gg/p6z2AnD">
+                        <img id="discord-img" src="./src/img/Discord-Logo-Black.png" style="height: 30px; width: 30px">
+                    </a>
+                </li>
+            </ul>
+            <div class="pr-2">
+                <button id="notif" type="button" class="btn btn-info btn-sm" data-container="body" data-toggle="popover"
+                    data-placement="left" data-html="true" onclick="openNotif()">
+                    Notifications <span class="badge badge-light"><span id="notif-counter"></span></span>
+                </button>
+                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#buyOrder">Buy</button>
+                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#sellOrder">Sell</button>
+            </div>
+            <form>
+                <div>
+                    <select class="browser-default custom-select" id="tokenList" onchange="refreshPage()">
+
+                    </select>
+                </div>
+            </form>
+        </div>
+    </nav>
+    <div class="grid-container" style="height: 95vh;" id="main">
+        <div class="cell order-book mb-1">
+            <div class="cell-header">
+                <img src="./src/img/ic_library_books_white_36dp.png">
+                Order Book
+            </div>
+            <div class="cell" style="overflow-y: scroll; height: 96%;">
+                <span id="order-book"></span>
+            </div>
+        </div>
+        <div class="cell chart">
+            <div class="cell-header">
+                <img src="./src/img/ic_show_chart_white_36dp.png">
+                Charts
+                <span style="font-size: 12px; font-weight: normal; cursor: pointer;" onclick="depthChart()">Market
+                    Depth |</span>
+                <span style="font-size: 12px; font-weight: normal; cursor: pointer;" onclick="priceVolChart()">Candlestick</span>
+            </div>
+            <div id="chart"></div>
+        </div>
+        <div class="cell buy-orders">
+            <div class="cell-header">
+                <img src="./src/img/ic_format_list_bulleted_white_36dp.png">
+                My Buy Orders
+            </div>
+            <div class="cell" style="overflow-y: scroll; overflow-x:hidden; height: 90%">
+                <table id="my-buy-order-table" class='table table-hover'></table>
+            </div>
+        </div>
+        <div class="cell sell-orders">
+            <div class="cell-header">
+                <img src="./src/img/ic_format_list_bulleted_white_36dp.png">
+                My Sell Orders
+            </div>
+            <div class="cell" style="overflow-y: scroll; overflow-x:hidden; height: 90%">
+                <table id="my-sell-order-table" class='table table-hover'></table>
+            </div>
+        </div>
+        <div class="cell trades">
+            <div class="cell-header">
+                <img src="./src/img/ic_monetization_on_white_36dp.png">
+                Trades
+            </div>
+            <div>
+                <table class=table table-hover">
+                    <thead>
+                        <tr>
+                            <td style="width: 49%">Amount</td>
+                            <td style="width: 50%; padding-right: 12px !important">Limit</td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="cell" style="overflow-y: scroll; height: 53vh">
+                <span id="trades"></span>
+            </div>
+        </div>
+        <div class="cell info" style="height: 101.6%">
+            <div class="cell-header">
+                <img src="./src/img/ic_account_circle_white_36dp.png">
+                Balance & Info
+            </div>
+            <div class="cell">
+                <ul class="list-group">
+                    <li class="list-group-item">Symbol:
+                        <span id="tokenSymbol"></span>
+                    </li>
+                    <li class="list-group-item">Last price:
+                        <span id="lastPrice"></span> ETH
+                    </li>
+                    <li class="list-group-item">24h Vol.
+                        <span id="dayVolume"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col" style="width: 20%">
+                                Token: <span id="tokenBalance"></span>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn btn-mdb-color btn-sm" onclick="withdrawToken()">
+                                    Withdraw
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col" style="width: 20%">
+                                Ether: <span id="ethBalance"></span>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn btn-mdb-color btn-sm" onclick="withdrawEth()">
+                                    Withdraw
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--Place Buy Order Modal-->
+    <div class="modal fade" id="buyOrder" tabindex="-1" role="dialog" aria-labelledby="buyLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col">
+                            <img src="./src/img/token_logo.png" height=50 witdh=50>
+                        </div>
+                        <div class="col-auto" style="display: flex; align-items: center">
+                            <h5 class="modal-title" id="buyLabel">Buy Order</h5>
+                        </div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="selectOrderType">Order type</label>
+                                    <select class="form-control" id="buyType" onchange="checkBuyOrder()">
+                                        <option>Limit</option>
+                                        <option>Market</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="amountInput">Token Amount</label>
+                                    <input type="number" class="form-control" id="buyAmount" placeholder="0.00"
+                                        onchange="checkBuyOrder()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="limitInput">ETH price limit</label>
+                                    <input type="number" class="form-control" id="buyLimit" placeholder="0.00" onchange="checkBuyOrder()">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="amountInput">Value</label>
+                                    <input type="number" class="form-control" id="buyValue" placeholder="0.00">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="placeBuyOrder()" data-dismiss="modal">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Place Sell Order Modal-->
+    <div class="modal fade" id="sellOrder" tabindex="-1" role="dialog" aria-labelledby="sellLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col">
+                            <img src="./src/img/token_logo.png" height=50 witdh=50>
+                        </div>
+                        <div class="col-auto" style="display: flex; align-items: center">
+                            <h5 class="modal-title" id="sellLabel">Sell Order</h5>
+                        </div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="selectOrderType">Order type</label>
+                                    <select class="form-control" id="sellType" onchange="checkSellOrder()">
+                                        <option>Limit</option>
+                                        <option>Market</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="amountInput">Token Amount</label>
+                                    <input type="number" class="form-control" id="sellAmount" placeholder="0.00"
+                                        onchange="checkSellOrder()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="sellLimit">ETH price limit</label>
+                                    <input type="number" class="form-control" id="sellLimit" placeholder="0.00"
+                                        onchange="checkSellOrder()">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="placeSellOrder()" data-dismiss="modal">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Loading Bar-->
+    <div class="modal" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="pageStatus" style="width: 100%">
+                        <div class="progress" style="height: 50px">
+                            <div id="loadBar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                aria-valuemax="100" style="width:0%">
+                                <span id="currentPageStatus"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Welcome Modal-->
+    <div class="modal" id="welcomeModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img style="width: 80%; height: 80%;" src="./src/img/0xChange-5_with.png">
+                    <button type="button" class="close" data-dismiss="modal" onclick="loadPage()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Welcome to 0xChange.net. To use the platform, please connect to your MetaMask account.</p>
+                    <div>
+                        <a href="https://metamask.io/" target="_blank">
+                            <img style="width: 50%; height: 50%; display: block; margin: auto" src="./src/img/download-metamask.png">
+                        </a>
+                    </div>
+                    <div class="pt-4">
+                        <p>Additional information about the exchange are available <a href="./about.html">here!</a></p>
+                        <p>This is a test version running on <span style="color: green">Ropsten</span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary" onclick="loadPage()">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="./src/js/jquery-3.3.1.min.js"></script>
+    <!-- MDBootstrap Datatables  -->
+    <script type="text/javascript" src="./src/js/addons/datatables.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="./src/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="./src/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="./src/js/mdb.min.js"></script>
+</body>
+
+</html>

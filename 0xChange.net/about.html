@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+    <!--Personal resources-->
+    <link rel="stylesheet" href="./src/css/about.css">
+
+    <title>0xChange.net</title>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="color: white; background-color: #EF8354; height: 5vh;">
+        <a class="navbar-brand" href="https://www.0xchange.net">
+            <img src="./src/img/0xChange-3.png" height="25%" width="160">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About</a>
+                </li>
+                <a href="https://discord.gg/HfxhKe6">
+                    <img id="discord-img" src="./src/img/Discord-Logo-White.png" style="height: 30px; width: 30px">
+                </a>
+            </ul>
+        </div>
+    </nav>
+    <div class="jumbotron jumbotron-fluid bg-dark">
+        <div class="container-fluid">
+            <h1 class="display-4">0xChange.net</h1>
+            <p class="lead">Your quick and easy ERC20 DEX</p>
+        </div>
+    </div>
+    <div class="container" id="about">
+        <div class="row">
+            <div class="col-5">
+                <h1>What is 0xChange.net?</h1>
+            </div>
+            <div class="col-7">
+                <p>
+                    0xChange.net is a Decentralized Exchange (DEX) to trade ERC-20 Tokens on the Ethereum Blockchain.
+                    The exchange is based on a Smart Contract that manages the order book and the transactions.
+                </p>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-7">
+                <p>
+                    0xChange.net is one of the only DEX providing a full on-chain matching. What does it mean?
+                    It means that you can just place your order and the exchange will do the rest by finding one or
+                    more counterparties.
+                </p>
+                <p>
+                    It makes the experience much closer to the one you can enjoy on a Centralized exchange. In
+                    addition,
+                    trading is more efficient as many transactions can be executed in one block. It goes faster and gas
+                    cost is lower for large orders (see cost section below).
+                </p>
+            </div>
+            <div class="col-5">
+                <h1>Why 0xChange.net?</h1>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-5">
+                <h1>How does it work?</h1>
+
+            </div>
+            <div class="col-7">
+                <p>
+                    To use the exchange, you will need a Metamask account (www.metamask.io). Once connected, just place your buy or sell order
+                    we take care of the rest.
+                    <a style="align-items: center" href="https://metamask.io/" target="_blank">
+                        <img style="width: 50%; height: 50%;" src="./src/img/download-metamask.png">
+                    </a>
+                </p>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-7">
+                <p>
+                    A small fee of 0.25% is charged on the ETH payment to the seller of token, no fees
+                    on the buyer. So if you want to buy 100 xTokens you will
+                    receive exactly 100 xTokens.
+
+                    Gas cost is estimated as follows:
+                    <ul>
+                        <li>New Order: ~250-300k</li>
+                        <li>+50k per trade</li>
+                        <li>Example: if you place an order to buy 100 xTokens
+                            and your order needs 5 counterparties to be fulfilled, the gas cost is estimated to
+                            500k (250k + 5x50k). This would be the equivalent of placing 5 distinct orders on
+                            a standard DEX without automated matching.
+                        </li>
+                    </ul>
+                </p>
+            </div>
+            <div class="col-5">
+                <h1>How much does it cost?</h1>
+            </div>
+        </div>
+        <hr>
+        <div class="bg-dark" style="color:#EF8354; text-align: center">
+            <h1>Exchange Rules</h1>
+        </div>
+        <h2>Orders</h2>
+        <p>
+            Orders are managed as follows:
+            <ul>
+                <li>The exchange accepts limit and market orders</li>
+                <li>Orders with a limit of zero are considered market orders.</li>
+                <li>To place a buy order at the market, an ETH amount must be sent with the order</li>
+                <li>An order is deemed executed when the token amount requested is reached or when the ETH
+                    left on an order is smaller than 0.000000001 ETH.
+                </li>
+                <li>New orders are placed in the order book and sorted first by price limit then by
+                    block.nr</li>
+            </ul>
+        </p>
+        <h2>Price</h2>
+        <p>
+            Each time a trader places an order, she initates the matching mechanism:
+            <ul>
+                <li>Matching between two market orders is executed at the lowest of the last paid price or
+                    the best ask price.
+                </li>
+                <li>Matching between two limit orders depends on the direction of the trade:
+                    <ul>
+                        <li>If a sell order initiates the matching, the bid price is used</li>
+                        <li>If a buy order initiates the matching, the ask price is used</li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+        <hr>
+        <div class="bg-dark" style="color:#EF8354; text-align: center">
+            <h1>The Team</h1>
+        </div>
+        <div class="row">
+            <div class="card" style="width: 18rem; margin: 0 auto">
+                <img class="card-img-top" src="./src/img/ForeverAlone.jpg">
+                <div class="card-body">
+                    <h5 class="card-title">Gilles Walther, CEO</h5>
+                    <p class="card-text">I wish I had a team</p>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="bg-dark" style="color:#EF8354; text-align: center">
+            <h1>Contact</h1>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p>To report bugs or if you have any suggestion please contact us on <a href="mailto: info@0xchange.net ">info@0xchange.net</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark footer"></footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js " integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo "
+        crossorigin="anonymous "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js " integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49 "
+        crossorigin="anonymous "></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js " integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T "
+        crossorigin="anonymous "></script>
+
+</body>
