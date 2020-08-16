@@ -1,4 +1,4 @@
-const exchangeAddress = "0x82ae8b06c54b2d5f0da4a830be135c805f737c5e";
+const exchangeAddress = "0x7aaCDBa312276e3119e446Fe30bA4A5F5ccB261c";
 var account = ""
 var tokenContract;
 var token;
@@ -46,552 +46,236 @@ setInterval(function () {
 	refreshPage(true);
 }, 20000);
 
+//Contract ABI
 var exchangeContract = web3.eth.contract([
 	{
-		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "tokenAddress",
 				"type": "address"
 			}
 		],
 		"name": "addToken",
 		"outputs": [],
-		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			},
 			{
-				"name": "orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "cancelOrder",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "close",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_type",
-				"type": "bool"
-			}
-		],
-		"name": "matching",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
+				"internalType": "uint256",
 				"name": "_amount",
 				"type": "uint256"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_limit",
 				"type": "uint256"
 			}
 		],
-		"name": "place_buy_order",
-		"outputs": [
-			{
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"payable": true,
+		"name": "buy",
+		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
-		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "orderId",
+				"type": "bytes32"
+			}
+		],
+		"name": "cancel",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_from",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_token",
 				"type": "uint256"
 			},
 			{
+				"internalType": "address",
 				"name": "_tokenContract",
 				"type": "address"
 			},
 			{
+				"internalType": "bytes",
 				"name": "_data",
 				"type": "bytes"
 			}
 		],
 		"name": "receiveApproval",
 		"outputs": [],
-		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": false,
 		"inputs": [
 			{
-				"name": "status",
-				"type": "bool"
-			}
-		],
-		"name": "setIsExchangeOpen",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_tokenAddress",
+				"internalType": "address",
+				"name": "_seller",
 				"type": "address"
 			},
 			{
-				"name": "_to",
-				"type": "address"
-			},
-			{
+				"internalType": "address",
 				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_limit",
 				"type": "uint256"
 			}
 		],
-		"name": "transferToken",
+		"name": "sell",
 		"outputs": [],
-		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": false,
 		"inputs": [
 			{
-				"name": "_sender",
-				"type": "address"
-			}
-		],
-		"name": "withdrawEth",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "withdrawFees",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
+				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			}
 		],
-		"name": "withdrawToken",
+		"name": "takeCoin",
 		"outputs": [],
-		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"payable": true,
-		"stateMutability": "payable",
+		"name": "takeEth",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "order_id",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"name": "token_address",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "block_nr",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "order_type",
-				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "eth_left",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "token_left",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "limit",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "executed",
-				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"name": "cancelled",
-				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"name": "previous_order",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"name": "next_order",
-				"type": "bytes32"
-			}
-		],
-		"name": "Placed",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "order_id",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "eth_left",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "token_left",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "executed",
-				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"name": "cancelled",
-				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"name": "previous_order",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"name": "next_order",
-				"type": "bytes32"
-			}
-		],
-		"name": "Updated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "trade_id",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"name": "token_address",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "block_nr",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "trade_timestamp",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "order_type",
-				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"name": "buy_order_id",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"name": "sell_order_id",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"name": "trade_amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "trade_price",
-				"type": "uint256"
-			}
-		],
-		"name": "Traded",
-		"type": "event"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "b",
-				"type": "bytes"
-			}
-		],
-		"name": "bytesToUint",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "eth_balance",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
 		"inputs": [],
-		"name": "fees",
+		"name": "exchange",
 		"outputs": [
 			{
+				"internalType": "bool",
+				"name": "is_exchange_open",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getEthBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
 		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": true,
 		"inputs": [
 			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "first_buy_order_id",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "first_sell_order_id",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "free_eth_balance",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			},
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "free_token_balance",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
+				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			}
 		],
-		"name": "getBestPrice",
+		"name": "getExecutionsLength",
 		"outputs": [
 			{
-				"name": "price",
+				"internalType": "uint256",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "tokenAddress",
 				"type": "address"
 			}
 		],
-		"name": "getDecimals",
+		"name": "getFirstBuyOrder",
 		"outputs": [
 			{
+				"internalType": "bytes32",
 				"name": "",
-				"type": "uint256"
+				"type": "bytes32"
 			}
 		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			}
+		],
+		"name": "getFirstSellOrder",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "tokenAddress",
 				"type": "address"
 			}
@@ -599,267 +283,42 @@ var exchangeContract = web3.eth.contract([
 		"name": "getLastPrice",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
 		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": true,
 		"inputs": [
 			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getNextOrder",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderBlockNr",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderEthLeft",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderEthPriceLimit",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderEthSent",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderSender",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderTokenAmount",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderTokenLeft",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getOrderType",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "getPreviousOrder",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
+				"internalType": "address",
 				"name": "tokenAddress",
 				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "id",
+				"type": "bytes32"
 			}
 		],
-		"name": "getSymbol",
+		"name": "getOrderLimit",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
-				"type": "string"
+				"type": "uint256"
 			}
 		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": true,
 		"inputs": [
 			{
+				"internalType": "uint256",
 				"name": "pos",
 				"type": "uint256"
 			}
@@ -867,32 +326,55 @@ var exchangeContract = web3.eth.contract([
 		"name": "getTokenAddress",
 		"outputs": [
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
 		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "getTokenListLength",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getTokenBalance",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
 		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"inputs": [],
+		"name": "getTokenListLength",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "tokenAddress",
 				"type": "address"
 			}
@@ -900,245 +382,11 @@ var exchangeContract = web3.eth.contract([
 		"name": "getTokenSymbol",
 		"outputs": [
 			{
+				"internalType": "string",
 				"name": "",
 				"type": "string"
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "is_token_listed",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "isOrderCancelled",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_orderId",
-				"type": "bytes32"
-			}
-		],
-		"name": "isOrderExecuted",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "last_price",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "listed_tokens",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			},
-			{
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"name": "orders",
-		"outputs": [
-			{
-				"name": "id",
-				"type": "bytes32"
-			},
-			{
-				"name": "token_address",
-				"type": "address"
-			},
-			{
-				"name": "block_nr",
-				"type": "uint256"
-			},
-			{
-				"name": "order_type",
-				"type": "bool"
-			},
-			{
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"name": "eth_sent",
-				"type": "uint256"
-			},
-			{
-				"name": "eth_left",
-				"type": "uint256"
-			},
-			{
-				"name": "token_amount",
-				"type": "uint256"
-			},
-			{
-				"name": "token_left",
-				"type": "uint256"
-			},
-			{
-				"name": "limit",
-				"type": "uint256"
-			},
-			{
-				"name": "executed",
-				"type": "bool"
-			},
-			{
-				"name": "cancelled",
-				"type": "bool"
-			},
-			{
-				"name": "previous_order",
-				"type": "bytes32"
-			},
-			{
-				"name": "next_order",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			},
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "token_balance",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "token_list_array",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
 	}
@@ -1494,3 +742,6 @@ var tokenContract = web3.eth.contract([
 ]);
 
 console.log(exchange);
+
+var version = web3.version.api;
+console.log(version);

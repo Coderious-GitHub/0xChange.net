@@ -10,7 +10,7 @@ async function fetchOrders(refresh) {
     // Open a new connection, using the GET request on the URL endpoint
     // Get "Placed" event log from Etherscan API
     var url = "https://api-ropsten.etherscan.io/api?module=logs&action=getLogs&" +
-        "fromBlock=4272183&toBlock=latest&" +
+        "fromBlock=8446414&toBlock=latest&" +
         "address=" + exchangeAddress + "&" +
         "topic0=0x50d62adf60271dc1c915497f271dfe9c00df5c3f70f9fea2010820bbe0a06b73&" + //Placed event
         "apikey=A4NKKZFHTW1UH8T1S1WJYM5QJYYR3IDXQB";
@@ -43,12 +43,14 @@ async function fetchOrders(refresh) {
                 order_limit: parseFloat(web3.fromWei(web3.toBigNumber("0x" + eventData[7].toString()).toNumber(), "ether")).toFixed(8),
                 executed: false,
                 cancelled: false,
-                previous_order: "0x" + eventData[10].toString(),
-                next_order: "0x" + eventData[11].toString()
+                previous_order: "0x" + eventData[8].toString(),
+                next_order: "0x" + eventData[9].toString()
             });
         }
 
     });
+
+    console.log(orderLog);
 
     updateOrders(refresh);
 }
@@ -56,11 +58,11 @@ async function fetchOrders(refresh) {
 async function updateOrders(refresh) {
 
     // Open a new connection, using the GET request on the URL endpoint
-    // Get "Placed" event log from Etherscan API
+    // Get "Traded" event log from Etherscan API
     var url = "https://api-ropsten.etherscan.io/api?module=logs&action=getLogs&" +
-        "fromBlock=4272183&toBlock=latest&" +
+        "fromBlock=8446414&toBlock=latest&" +
         "address=" + exchangeAddress + "&" +
-        "topic0=0xababffa2a47f95831214cc86896a4aa44bde0abc18d0b94f82f04a441ba40ebf&" + //Placed event
+        "topic0=0xababffa2a47f95831214cc86896a4aa44bde0abc18d0b94f82f04a441ba40ebf&" + //Updated event
         "apikey=A4NKKZFHTW1UH8T1S1WJYM5QJYYR3IDXQB";
 
     const updateResponse = await fetch(url);
@@ -401,7 +403,7 @@ async function fetchTrades() {
     var url = "https://api-ropsten.etherscan.io/api?module=logs&action=getLogs&" +
         "fromBlock=4272183&toBlock=latest&" +
         "address=" + exchangeAddress + "&" +
-        "topic0=0xf0ce5fa6b22d2c7c2a5b03cd008b1dc37a091ca7e8c3596a87ff203bd62da8bf&" + //Placed event
+        "topic0=0xf0ce5fa6b22d2c7c2a5b03cd008b1dc37a091ca7e8c3596a87ff203bd62da8bf&" + //Traded event
         "apikey=A4NKKZFHTW1UH8T1S1WJYM5QJYYR3IDXQB";
 
     const tradesResponse = await fetch(url)
@@ -433,8 +435,6 @@ async function fetchTrades() {
 
             });
         }
-
-        console.log(tradeLog);
 
         createTradeTable();
 

@@ -228,7 +228,7 @@ function placeBuyOrder() {
 
     amount = Math.round(amount * Math.pow(10, tokenDecimals));
 
-    exchange.place_buy_order.sendTransaction(activeToken, amount, limit, { from: account, value: value, gasPrice: web3.toWei(4, "gwei"), gas: 1000000 }, function (err, transactionHash) {
+    exchange.buy.sendTransaction(activeToken, amount, limit, { from: account, value: value, gasPrice: web3.toWei(4, "gwei"), gas: 1000000 }, function (err, transactionHash) {
         if (!err) {
 
             notifCounter += 1;
@@ -286,7 +286,7 @@ function placeSellOrder() {
 }
 
 function withdrawToken() {
-    exchange.withdrawToken.sendTransaction(activeToken, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
+    exchange.takeCoin.sendTransaction(activeToken, account, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
         if (!err) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;
@@ -309,7 +309,7 @@ function withdrawToken() {
 }
 
 function withdrawEth() {
-    exchange.withdrawEth.sendTransaction(account, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
+    exchange.takeEth.sendTransaction(account, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
         if (!err) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;
@@ -332,7 +332,7 @@ function withdrawEth() {
 }
 
 function cancelOrder(order_id) {
-    exchange.cancelOrder.sendTransaction(activeToken, order_id, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 500000 }, function (err, transactionHash) {
+    exchange.cancel.sendTransaction(activeToken, order_id, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 500000 }, function (err, transactionHash) {
         if (!err) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;

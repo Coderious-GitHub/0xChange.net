@@ -8,19 +8,10 @@ async function lastPrice(token_address) {
   }
 }
 
-async function fees() {
-  let fees;
-  fees = promisify(cb => exchange.fees(cb));
-  try {
-    document.getElementById("fees").innerHTML = await fees / 100;
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 async function tokenBalance(token_address, client_address) {
   let tokenBalance;
-  tokenBalance = promisify(cb => exchange.free_token_balance(token_address, client_address, cb));
+  tokenBalance = promisify(cb => exchange.getTokenBalance(token_address, client_address, cb));
   try {
     document.getElementById("tokenBalance").innerHTML = (await tokenBalance / Math.pow(10, tokenDecimals)).toFixed(4);
   } catch (error) {
@@ -30,7 +21,7 @@ async function tokenBalance(token_address, client_address) {
 
 async function ethBalance(client_address) {
   let ethBalance;
-  ethBalance = promisify(cb => exchange.eth_balance(client_address, cb));
+  ethBalance = promisify(cb => exchange.getEthBalance(client_address, cb));
   try {
     document.getElementById("ethBalance").innerHTML = Number(web3.fromWei(String(await ethBalance), 'ether')).toFixed(4);
   } catch (error) {
@@ -40,7 +31,7 @@ async function ethBalance(client_address) {
 
 async function firstBuyOrder(token_address) {
   let firstBuyOrder;
-  firstBuyOrder = promisify(cb => exchange.first_buy_order_id(token_address, cb));
+  firstBuyOrder = promisify(cb => exchange.getFirstBuyOrder(token_address, cb));
   try {
     return await firstBuyOrder;
   } catch (error) {
@@ -50,7 +41,7 @@ async function firstBuyOrder(token_address) {
 
 async function firstSellOrder(token_address) {
   let firstSellOrder;
-  firstSellOrder = promisify(cb => exchange.first_sell_order_id(token_address, cb));
+  firstSellOrder = promisify(cb => exchange.getLastSellOrder(token_address, cb));
   try {
     return await firstSellOrder;
   } catch (error) {
