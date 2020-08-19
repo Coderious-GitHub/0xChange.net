@@ -401,7 +401,7 @@ async function fetchTrades() {
     // Open a new connection, using the GET request on the URL endpoint
     // Get "Placed" event log from Etherscan API
     var url = "https://api-ropsten.etherscan.io/api?module=logs&action=getLogs&" +
-        "fromBlock=4272183&toBlock=latest&" +
+        "fromBlock=8446414&toBlock=latest&" +
         "address=" + exchangeAddress + "&" +
         "topic0=0xf0ce5fa6b22d2c7c2a5b03cd008b1dc37a091ca7e8c3596a87ff203bd62da8bf&" + //Traded event
         "apikey=A4NKKZFHTW1UH8T1S1WJYM5QJYYR3IDXQB";

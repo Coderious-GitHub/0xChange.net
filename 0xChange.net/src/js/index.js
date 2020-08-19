@@ -261,9 +261,18 @@ function placeSellOrder() {
 
     amount = Math.round(amount * Math.pow(10, tokenDecimals));
 
-    let bytesLimit = toBytes(limit);
+    //let bytesLimit = toBytes(limit);
+    var bytesLimit = web3.toHex(limit);
+    var hexLimit = "0x"
 
-    token.approveAndCall.sendTransaction(exchangeAddress, amount, bytesLimit, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 1000000 }, function (err, transactionHash) {
+    for(i = 0; i< 64 - (bytesLimit.length - 2); i++)
+    {
+        hexLimit = hexLimit.concat("0");
+    }
+
+    hexLimit = hexLimit.concat(bytesLimit.substring(2, bytesLimit.length));
+
+    token.approveAndCall.sendTransaction(exchangeAddress, amount, hexLimit, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 1000000 }, function (err, transactionHash) {
         if (!err) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;
@@ -286,7 +295,7 @@ function placeSellOrder() {
 }
 
 function withdrawToken() {
-    exchange.takeCoin.sendTransaction(activeToken, account, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
+    exchange.takeCoin.sendTransaction(activeToken, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
         if (!err) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;
@@ -309,7 +318,7 @@ function withdrawToken() {
 }
 
 function withdrawEth() {
-    exchange.takeEth.sendTransaction(account, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
+    exchange.takeEth.sendTransaction({ from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
         if (!err) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;

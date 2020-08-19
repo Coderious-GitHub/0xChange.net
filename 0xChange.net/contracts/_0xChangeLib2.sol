@@ -164,12 +164,40 @@ contract _0xChange {
         return exchange.orders[tokenAddress][id].limit;
     }
     
+    function getOrderEthLeft(address tokenAddress, bytes32 id) public view returns(uint256) {
+        return exchange.orders[tokenAddress][id].eth_left;
+    }
+    
+    function getOrderTokenLeft(address tokenAddress, bytes32 id) public view returns(uint256) {
+        return exchange.orders[tokenAddress][id].token_left;
+    }
+    
     
     // Executions
     function getExecutionsLength(address _token) public view returns(uint) {
         return exchange.trade_list[_token].length;
     }
 
+    
+    /*function toUint256(bytes memory _bytes) internal pure returns (uint256) {
+    
+        uint256 tempUint;
+    
+        assembly {
+            tempUint := mload(add(_bytes, 0x20))
+        }
+
+        return tempUint / (16 ** (64 - 2 * _bytes.length));
+        
+    }*/
+
+    function toUint256(bytes memory _b) public pure returns(uint256 value)
+    {
+        assembly {
+            value := mload(add(_b, 0x20))
+        }
+    }
+    
     
 }
 
@@ -627,10 +655,7 @@ library _0xChangeLib {
 
 
         self.token_balance[_token][buyer] += amount;
-        self.token_balance[_token][seller] -= amount;
-
         self.eth_balance[seller] += trx_volume;
-        self.eth_balance[buyer] -= trx_volume;
 
  
         //Consider an order as executed if the token amount left is zero
@@ -868,13 +893,9 @@ library _0xChangeLib {
             value := mload(add(_bytes, 0x20))
         }
         
-        if(_bytes.length < 32)
-        {
-            value = value / (10**(32-_bytes.length));
-        }
+        value = value / (16**(50));
         
     }
-    
     
     function max(uint a, uint b) internal pure returns (uint) {
         if(a >= b)
