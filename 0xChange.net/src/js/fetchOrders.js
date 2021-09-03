@@ -33,14 +33,14 @@ async function fetchOrders(refresh) {
             orderLog.push({
                 orderId: "0x" + eventData[0].toString(),
                 token_address: "0x" + eventData[1].substring(24),
-                block_nr: web3.toBigNumber("0x" + eventData[2].toString()).toNumber(),
-                order_type: web3.toBigNumber("0x" + eventData[3].toString()).toNumber(),
+                block_nr: web3.utils.toBN("0x" + eventData[2].toString()),
+                order_type: web3.utils.toBN("0x" + eventData[3].toString()),
                 sender: "0x" + eventData[4].substring(24),
-                eth_sent: parseFloat(web3.fromWei(web3.toBigNumber("0x" + eventData[5].toString()).toNumber(), "ether")).toFixed(8),
-                eth_left: parseFloat(web3.fromWei(web3.toBigNumber("0x" + eventData[5].toString()).toNumber(), "ether")).toFixed(8),
-                token_amount: parseFloat(web3.toBigNumber("0x" + eventData[6].toString()).toNumber() / Math.pow(10, tokenDecimals)).toFixed(8),
-                token_left:  parseFloat(web3.toBigNumber("0x" + eventData[6].toString()).toNumber() / Math.pow(10, tokenDecimals)).toFixed(8),
-                order_limit: parseFloat(web3.fromWei(web3.toBigNumber("0x" + eventData[7].toString()).toNumber(), "ether")).toFixed(8),
+                eth_sent: parseFloat(web3.utils.fromWei(web3.utils.toBN("0x" + eventData[5].toString()), "ether")).toFixed(8),
+                eth_left: parseFloat(web3.utils.fromWei(web3.utils.toBN("0x" + eventData[5].toString()), "ether")).toFixed(8),
+                token_amount: parseFloat(web3.utils.toBN("0x" + eventData[6].toString()) / Math.pow(10, tokenDecimals)).toFixed(8),
+                token_left:  parseFloat(web3.utils.toBN("0x" + eventData[6].toString()) / Math.pow(10, tokenDecimals)).toFixed(8),
+                order_limit: parseFloat(web3.utils.fromWei(web3.utils.toBN("0x" + eventData[7].toString()), "ether")).toFixed(8),
                 executed: false,
                 cancelled: false,
                 previous_order: "0x" + eventData[8].toString(),
@@ -49,8 +49,6 @@ async function fetchOrders(refresh) {
         }
 
     });
-
-    console.log(orderLog);
 
     updateOrders(refresh);
 }
@@ -85,12 +83,12 @@ async function updateOrders(refresh) {
             for (var j = 0; j < orderLog.length; j++) {
 
                 if (orderLog[j].orderId == updatedOrder) {
-                    orderLog[j].eth_left = parseFloat(web3.fromWei(web3.toBigNumber("0x" + eventData[2].toString()).toNumber(), "ether")).toFixed(8);
-                    orderLog[j].token_left = parseFloat(web3.toBigNumber("0x" + eventData[3].toString()).toNumber() / Math.pow(10, tokenDecimals)).toFixed(8);
-                    orderLog[j].executed = web3.toBigNumber("0x" + eventData[4].toString()).toNumber();
-                    orderLog[j].cancelled = web3.toBigNumber("0x" + eventData[5].toString()).toNumber();
-                    orderLog[j].previous_order = web3.toBigNumber("0x" + eventData[6].toString()).toNumber();
-                    orderLog[j].next_order = web3.toBigNumber("0x" + eventData[7].toString()).toNumber();
+                    orderLog[j].eth_left = parseFloat(web3.utils.fromWei(web3.utils.toBN("0x" + eventData[2].toString()), "ether")).toFixed(8);
+                    orderLog[j].token_left = parseFloat(web3.utils.toBN("0x" + eventData[3].toString()) / Math.pow(10, tokenDecimals)).toFixed(8);
+                    orderLog[j].executed = web3.utils.toBN("0x" + eventData[4].toString());
+                    orderLog[j].cancelled = web3.utils.toBN("0x" + eventData[5].toString());
+                    orderLog[j].previous_order = web3.utils.toBN("0x" + eventData[6].toString());
+                    orderLog[j].next_order = web3.utils.toBN("0x" + eventData[7].toString());
                     break;
                 }
             }
@@ -106,12 +104,13 @@ async function updateOrders(refresh) {
     }
 }
 
-async function createOrderBook() {
+function createOrderBook() {
 
     var buyOrders = []
     var sellOrders = []
 
     for (var i = 0; i < orderLog.length; i++) {
+
         if (orderLog[i].token_address.toLowerCase() == activeToken &&
             orderLog[i].cancelled == false &&
             orderLog[i].executed == false &&
@@ -285,7 +284,7 @@ function createMyBuyOrders(refresh) {
         });
     } else {
         let table = $('#my-buy-order-table').DataTable();
-        let info = table.page.info();;
+        let info = table.page.info();
         $('#my-buy-order-table').dataTable().fnClearTable();
         if (myBuyOrders.length != 0) {
             $('#my-buy-order-table').dataTable().fnAddData(myBuyOrders);
@@ -425,13 +424,13 @@ async function fetchTrades() {
             tradeLog.push({
                 trade_id: "0x" + eventData[0].toString(),
                 token_address: "0x" + eventData[1].substring(24),
-                block_nr: web3.toBigNumber("0x" + eventData[2].toString()).toNumber(),
-                timestamp: web3.toBigNumber("0x" + eventData[3].toString()).toNumber(),
-                order_type: web3.toBigNumber("0x" + eventData[4].toString()).toNumber(),
+                block_nr: web3.utils.toBN("0x" + eventData[2].toString()),
+                timestamp: web3.utils.toBN("0x" + eventData[3].toString()),
+                order_type: web3.utils.toBN("0x" + eventData[4].toString()),
                 buy_order_id: "0x" + eventData[5].substring(24),
                 sell_order_id: "0x" + eventData[6].substring(24),
-                trade_amount: web3.toBigNumber("0x" + eventData[7].toString()).toNumber(),
-                trade_price: web3.toBigNumber("0x" + eventData[8].toString()).toNumber(),
+                trade_amount: web3.utils.toBN("0x" + eventData[7].toString()),
+                trade_price: web3.utils.toBN("0x" + eventData[8].toString()),
 
             });
         }
@@ -471,7 +470,7 @@ function createTradeTable() {
         }
 
         result += "<td style='width: 50%'>" + parseFloat(data[i].trade_amount / Math.pow(10, tokenDecimals)).toFixed(8) + "</td>";
-        result += "<td style='width: 50%'>" + parseFloat(web3.fromWei(data[i].trade_price), "ether").toFixed(8) + "</td>";
+        result += "<td style='width: 50%'>" + parseFloat(web3.utils.fromWei(data[i].trade_price), "ether").toFixed(8) + "</td>";
         result += "</tr>";
     }
 

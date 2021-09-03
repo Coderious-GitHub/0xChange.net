@@ -1,8 +1,8 @@
 async function lastPrice(token_address) {
   let lastPrice
-  lastPrice = promisify(cb => exchange.getLastPrice(token_address, cb))
+  lastPrice = promisify(cb => exchange.methods.getLastPrice(token_address).call(cb))
   try {
-    document.getElementById("lastPrice").innerHTML = web3.fromWei(await lastPrice, "ether");
+    document.getElementById("lastPrice").innerHTML = web3.utils.fromWei(await lastPrice, "ether");
   } catch (error) {
     console.error(error);
   }
@@ -11,7 +11,7 @@ async function lastPrice(token_address) {
 
 async function tokenBalance(token_address, client_address) {
   let tokenBalance;
-  tokenBalance = promisify(cb => exchange.getTokenBalance(token_address, client_address, cb));
+  tokenBalance = promisify(cb => exchange.methods.getTokenBalance(token_address, client_address).call(cb));
   try {
     document.getElementById("tokenBalance").innerHTML = (await tokenBalance / Math.pow(10, tokenDecimals)).toFixed(4);
   } catch (error) {
@@ -21,9 +21,9 @@ async function tokenBalance(token_address, client_address) {
 
 async function ethBalance(client_address) {
   let ethBalance;
-  ethBalance = promisify(cb => exchange.getEthBalance(client_address, cb));
+  ethBalance = promisify(cb => exchange.methods.getEthBalance(client_address).call(cb));
   try {
-    document.getElementById("ethBalance").innerHTML = Number(web3.fromWei(String(await ethBalance), 'ether')).toFixed(4);
+    document.getElementById("ethBalance").innerHTML = Number(web3.utils.fromWei(String(await ethBalance), 'ether')).toFixed(4);
   } catch (error) {
     console.error(error);
   }
@@ -31,7 +31,7 @@ async function ethBalance(client_address) {
 
 async function firstBuyOrder(token_address) {
   let firstBuyOrder;
-  firstBuyOrder = promisify(cb => exchange.getFirstBuyOrder(token_address, cb));
+  firstBuyOrder = promisify(cb => exchange.methods.getFirstBuyOrder(token_address).call(cb));
   try {
     return await firstBuyOrder;
   } catch (error) {
@@ -41,7 +41,7 @@ async function firstBuyOrder(token_address) {
 
 async function firstSellOrder(token_address) {
   let firstSellOrder;
-  firstSellOrder = promisify(cb => exchange.getLastSellOrder(token_address, cb));
+  firstSellOrder = promisify(cb => exchange.methods.getLastSellOrder(token_address).call(cb));
   try {
     return await firstSellOrder;
   } catch (error) {
@@ -51,7 +51,7 @@ async function firstSellOrder(token_address) {
 
 async function tokenListLength() {
   let tokenListLength;
-  tokenListLength = promisify(cb => exchange.getTokenListLength(cb));
+  tokenListLength = promisify(cb => exchange.methods.getTokenListLength().call(cb));
   try {
     return await tokenListLength;
   } catch (error) {
@@ -61,7 +61,7 @@ async function tokenListLength() {
 
 async function tokenAddress(pos) {
   let tokenAddress;
-  tokenAddress = promisify(cb => exchange.getTokenAddress(pos, cb));
+  tokenAddress = promisify(cb => exchange.methods.getTokenAddress(pos).call(cb));
   try {
     return await tokenAddress;
   } catch (error) {
@@ -71,7 +71,7 @@ async function tokenAddress(pos) {
 
 async function tokenSymbol(token_address) {
   let tokenSymbol;
-  tokenSymbol = promisify(cb => exchange.getTokenSymbol(token_address, cb));
+  tokenSymbol = promisify(cb => exchange.methods.getTokenSymbol(token_address).call(cb));
   try {
     return await tokenSymbol;
   } catch (error) {
@@ -81,11 +81,17 @@ async function tokenSymbol(token_address) {
 
 async function getDecimals() {
   let decimals;
-  decimals = promisify(cb => token.decimals(cb));
+  decimals = promisify(cb => token.methods.decimals().call(cb));
   try {
     return await decimals;
   } catch (error) {
     console.error(error);
   }
+}
+
+async function getActiveAccount() {
+  accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+  account = accounts[0];
+  return account;
 }
 

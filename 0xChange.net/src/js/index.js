@@ -16,7 +16,9 @@ async function welcome() {
         $('[data-toggle="popover"]').popover();
     })
 
-    var network = web3.version.network;
+    var network = window.ethereum.networkVersion;
+    var account = await getActiveAccount();
+
     if (account == null || network != 3) {
         $('#welcomeModal').modal('show');
     } else {
@@ -38,7 +40,8 @@ async function loadPage() {
 
     await loadTokenList();
     activeToken = await tokenAddress(document.getElementById("tokenList").selectedIndex);
-    token = tokenContract.at(activeToken);
+    activeToken = activeToken.toLowerCase();
+    token = new web3.eth.Contract(tokenContract, activeToken);
     lastPrice(activeToken);
     document.getElementById("tokenSymbol").innerHTML = await tokenSymbol(await tokenAddress(document.getElementById("tokenList").selectedIndex));
     tokenDecimals = await getDecimals();
@@ -219,50 +222,60 @@ function priceVolChart() {
 function placeBuyOrder() {
     var limitType = document.getElementById("buyType").value;
     var amount = document.getElementById("buyAmount").value;
-    var limit = web3.toWei(document.getElementById("buyLimit").value, "ether");
+    var limit = 0;
 
-    if (limitType == "Market")
-        limit = 0;
+    if (limitType != "Market")
+    {
+        limit = web3.utils.toWei(document.getElementById("buyLimit").value, "ether");
+    }
 
-    var value = web3.toWei(document.getElementById("buyValue").value, "ether");
+    var value = web3.utils.toWei(document.getElementById("buyValue").value, "ether");
 
     amount = Math.round(amount * Math.pow(10, tokenDecimals));
 
-    exchange.buy.sendTransaction(activeToken, amount, limit, { from: account, value: value, gasPrice: web3.toWei(4, "gwei"), gas: 1000000 }, function (err, transactionHash) {
-        if (!err) {
+    exchange.methods.buy(activeToken, amount, limit)
+        .send({from: account,
+            value: value, 
+            gasPrice: web3.utils.toWei("4", "gwei"), 
+            gas: 1000000 },
+        function(error, transactionHash){
+            if(!error)
+            {
+                notifCounter += 1;
+                document.getElementById("notif-counter").innerHTML = notifCounter;
+                notifications.push({Status: "Pending", Type: "Buy Order", TrxHash: transactionHash})
 
-            notifCounter += 1;
-            document.getElementById("notif-counter").innerHTML = notifCounter;
-            notifications.push({Status: "Pending", Type: "Buy Order", TrxHash: transactionHash})
-            console.log(transactionHash);
-
-            waitForReceipt(transactionHash, function (receipt) {
-                if (receipt) {
-                    notifCounter += 1;
-                    document.getElementById("notif-counter").innerHTML = notifCounter;
-                    if(receipt.status == "0x1") {
-                        notifications.push({Status: "Success", Type: "Buy Order", TrxHash: transactionHash})
-                    } else {
-                        notifications.push({Status: "Fail", Type: "Buy Order", TrxHash: transactionHash})
+                waitForReceipt(transactionHash, function (receipt) {
+                    if (receipt) {
+                        notifCounter += 1;
+                        document.getElementById("notif-counter").innerHTML = notifCounter;
+                        if(receipt.status == "0x1") {
+                            notifications.push({Status: "Success", Type: "Buy Order", TrxHash: transactionHash})
+                        } else {
+                            notifications.push({Status: "Fail", Type: "Buy Order", TrxHash: transactionHash})
+                        }
                     }
-                }
-            });
-        }
-    });
+                });
+            }
+        });
 }
+
 
 function placeSellOrder() {
     var limitType = document.getElementById("sellType").value;
     var amount = document.getElementById("sellAmount").value;
-    var limit = web3.toWei(document.getElementById("sellLimit").value, "ether");
+    var limit = 0;
 
-    if (limitType == "Market")
-        limit = 0;
+
+    if (limitType != "Market")
+    {
+        limit = web3.utils.toWei(document.getElementById("sellLimit").value, "ether");
+    }
 
     amount = Math.round(amount * Math.pow(10, tokenDecimals));
 
     //let bytesLimit = toBytes(limit);
-    var bytesLimit = web3.toHex(limit);
+    var bytesLimit = web3.utils.numberToHex(limit)
     var hexLimit = "0x"
 
     for(i = 0; i< 64 - (bytesLimit.length - 2); i++)
@@ -272,8 +285,12 @@ function placeSellOrder() {
 
     hexLimit = hexLimit.concat(bytesLimit.substring(2, bytesLimit.length));
 
-    token.approveAndCall.sendTransaction(exchangeAddress, amount, hexLimit, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 1000000 }, function (err, transactionHash) {
-        if (!err) {
+    token.methods.approveAndCall(exchangeAddress, amount, hexLimit)
+        .send({from: account,
+            gasPrice: web3.utils.toWei("4", "gwei"),
+            gas: 1000000 },
+        function (error, transactionHash) {
+        if (!error) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;
             notifications.push({Status: "Pending", Type: "Sell Order", TrxHash: transactionHash})
@@ -295,8 +312,12 @@ function placeSellOrder() {
 }
 
 function withdrawToken() {
-    exchange.takeCoin.sendTransaction(activeToken, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
-        if (!err) {
+    exchange.methods.takeCoin(activeToken)
+        .send({from: account,
+            gasPrice: web3.utils.toWei("4", "gwei"),
+            gas: 100000 },
+    function (error, transactionHash) {
+        if (!error) {
             notifCounter += 1;
             document.getElementById("notif-counter").innerHTML = notifCounter;
             notifications.push({Status: "Pending", Type: "Withdraw Token", TrxHash: transactionHash})
@@ -318,50 +339,53 @@ function withdrawToken() {
 }
 
 function withdrawEth() {
-    exchange.takeEth.sendTransaction({ from: account, gasPrice: web3.toWei(4, "gwei"), gas: 100000 }, function (err, transactionHash) {
-        if (!err) {
-            notifCounter += 1;
-            document.getElementById("notif-counter").innerHTML = notifCounter;
-            notifications.push({Status: "Pending", Type: "Withdraw ETH", TrxHash: transactionHash})
-            console.log(transactionHash);
+    exchange.methods.takeEth()
+        .send({ from: account, gasPrice: web3.utils.toWei("4", "gwei"), gas: 100000 },
+        function (error, transactionHash) {
+            if (!error) {
+                notifCounter += 1;
+                document.getElementById("notif-counter").innerHTML = notifCounter;
+                notifications.push({Status: "Pending", Type: "Withdraw ETH", TrxHash: transactionHash})
+                console.log(transactionHash);
 
-            waitForReceipt(transactionHash, function (receipt) {
-                if (receipt) {
-                    notifCounter += 1;
-                    document.getElementById("notif-counter").innerHTML = notifCounter;
-                    if(receipt.status == "0x1") {
-                        notifications.push({Status: "Success", Type: "Withdraw ETH", TrxHash: transactionHash})
-                    } else {
-                        notifications.push({Status: "Fail", Type: "Withdraw ETH", TrxHash: transactionHash})
+                waitForReceipt(transactionHash, function (receipt) {
+                    if (receipt) {
+                        notifCounter += 1;
+                        document.getElementById("notif-counter").innerHTML = notifCounter;
+                        if(receipt.status == "0x1") {
+                            notifications.push({Status: "Success", Type: "Withdraw ETH", TrxHash: transactionHash})
+                        } else {
+                            notifications.push({Status: "Fail", Type: "Withdraw ETH", TrxHash: transactionHash})
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
     });
 }
 
 function cancelOrder(order_id) {
-    exchange.cancel.sendTransaction(activeToken, order_id, { from: account, gasPrice: web3.toWei(4, "gwei"), gas: 500000 }, function (err, transactionHash) {
-        if (!err) {
-            notifCounter += 1;
-            document.getElementById("notif-counter").innerHTML = notifCounter;
-            notifications.push({Status: "Pending", Type: "Cancel Order", TrxHash: transactionHash})
-            console.log(transactionHash);
+    exchange.methods.cancel(activeToken, order_id)
+        .send({ from: account, gasPrice: web3.utils.toWei("4", "gwei"), gas: 500000 },
+        function (error, transactionHash) {
+            if (!error) {
+                notifCounter += 1;
+                document.getElementById("notif-counter").innerHTML = notifCounter;
+                notifications.push({Status: "Pending", Type: "Cancel Order", TrxHash: transactionHash})
+                console.log(transactionHash);
 
-            waitForReceipt(transactionHash, function (receipt) {
-                if (receipt) {
-                    notifCounter += 1;
-                    document.getElementById("notif-counter").innerHTML = notifCounter;
-                    if(receipt.status == "0x1") {
-                        notifications.push({Status: "Success", Type: "Cancel Order", TrxHash: transactionHash})
-                    } else {
-                        notifications.push({Status: "Fail", Type: "Cancel Order", TrxHash: transactionHash})
+                waitForReceipt(transactionHash, function (receipt) {
+                    if (receipt) {
+                        notifCounter += 1;
+                        document.getElementById("notif-counter").innerHTML = notifCounter;
+                        if(receipt.status == "0x1") {
+                            notifications.push({Status: "Success", Type: "Cancel Order", TrxHash: transactionHash})
+                        } else {
+                            notifications.push({Status: "Fail", Type: "Cancel Order", TrxHash: transactionHash})
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
     });
-
 }
 
 function openNotif() {

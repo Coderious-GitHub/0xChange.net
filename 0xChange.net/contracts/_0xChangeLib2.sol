@@ -151,7 +151,6 @@ contract _0xChange {
         return exchange.trades[tokenAddress][bytes32(exchange.trade_list[tokenAddress][getExecutionsLength(tokenAddress)-1])].price;
     }
 
-    
     function getFirstBuyOrder(address tokenAddress) public view returns(bytes32) {
         return exchange.first_buy_order_id[tokenAddress];
     }
@@ -605,6 +604,7 @@ library _0xChangeLib {
                     amount,
                     price));
 
+            self.trade_list[_token].push(uint256(exec_id));
 
             //Settle payment and finalize the trade
             settlement(self, _token, amount, price,

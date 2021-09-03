@@ -48,6 +48,7 @@ async function loadTokenList() {
 
 }
 
+
 async function refreshPage() {
 
   $("#loadBar").css("width", 0 + "%");
@@ -57,7 +58,10 @@ async function refreshPage() {
   document.getElementById("currentPageStatus").innerHTML = "Loading Orders";
 
   activeToken = await tokenAddress(document.getElementById("tokenList").selectedIndex);
-  token = tokenContract.at(activeToken);
+  activeToken = activeToken.toLowerCase();
+
+  token = new web3.eth.Contract(tokenContract, activeToken);
+
   lastPrice(activeToken);
   document.getElementById("tokenSymbol").innerHTML = await tokenSymbol(await tokenAddress(document.getElementById("tokenList").selectedIndex));
   tokenDecimals = await getDecimals();
@@ -165,8 +169,6 @@ function waitForReceipt(hash, cb) {
 function prepareOrderData(orders) {
 
   function processData() {
-
-    console.log(orders);
 
     for (var i = 0; i < orders.length; i++) {
       if (orders[i].token_address.toLowerCase() == activeToken &&
@@ -299,11 +301,11 @@ function prepareTradeData(data) {
     }
 
     let currentDay = new Date(data[0].timestamp * 1000).toLocaleDateString("en-US");
-    let open = web3.fromWei(data[0].trade_price, "ether");
-    let high = web3.fromWei(data[0].trade_price, "ether");
-    let low = web3.fromWei(data[0].trade_price, "ether");
-    let close = web3.fromWei(data[0].trade_price, "ether");
-    let volume = web3.fromWei(data[0].trade_price, "ether") * data[0].trade_amount;
+    let open = web3.utils.fromWei(data[0].trade_price, "ether");
+    let high = web3.utils.fromWei(data[0].trade_price, "ether");
+    let low = web3.utils.fromWei(data[0].trade_price, "ether");
+    let close = web3.utils.fromWei(data[0].trade_price, "ether");
+    let volume = web3.utils.fromWei(data[0].trade_price, "ether") * data[0].trade_amount;
     let missingZeroMonth;
     let missingZeroDate;
 
@@ -311,7 +313,7 @@ function prepareTradeData(data) {
       let newDate = new Date(data[i].timestamp * 1000).toLocaleDateString("en-US");
 
       if (newDate != currentDay) {
-        close = web3.fromWei(data[i - 1].trade_price, "ether");
+        close = web3.utils.fromWei(data[i - 1].trade_price, "ether");
 
         let date = new Date(currentDay);
 
@@ -337,25 +339,25 @@ function prepareTradeData(data) {
         })
 
         currentDay = new Date(data[i].timestamp * 1000).toLocaleDateString("en-US");
-        open = web3.fromWei(data[i].trade_price, "ether");
-        high = web3.fromWei(data[i].trade_price, "ether");
-        low = web3.fromWei(data[i].trade_price, "ether");
-        close = web3.fromWei(data[i].trade_price, "ether");
-        volume = web3.fromWei(data[i].trade_price, "ether") * data[i].trade_amount;
+        open = web3.utils.fromWei(data[i].trade_price, "ether");
+        high = web3.utils.fromWei(data[i].trade_price, "ether");
+        low = web3.utils.fromWei(data[i].trade_price, "ether");
+        close = web3.utils.fromWei(data[i].trade_price, "ether");
+        volume = web3.utils.fromWei(data[i].trade_price, "ether") * data[i].trade_amount;
 
       } else {
-        volume += web3.fromWei(data[i].trade_price, "ether") * data[i].trade_amount;
-        if (web3.fromWei(data[i].trade_price, "ether") > high) {
-          high = web3.fromWei(data[i].trade_price, "ether");
+        volume += web3.utils.fromWei(data[i].trade_price, "ether") * data[i].trade_amount;
+        if (web3.utils.fromWei(data[i].trade_price, "ether") > high) {
+          high = web3.utils.fromWei(data[i].trade_price, "ether");
         }
 
-        if (web3.fromWei(data[i].trade_price, "ether") < low) {
-          low = web3.fromWei(data[i].trade_price, "ether");
+        if (web3.utils.fromWei(data[i].trade_price, "ether") < low) {
+          low = web3.utils.fromWei(data[i].trade_price, "ether");
         }
       }
     }
 
-    close = web3.fromWei(data[data.length - 1].trade_price, "ether");
+    close = web3.utils.fromWei(data[data.length - 1].trade_price, "ether");
 
     let date = new Date(currentDay);
 
@@ -393,6 +395,5 @@ function prepareTradeData(data) {
     document.getElementById("dayVolume").innerHTML = "No data available";
   }
 
-  console.log(res);
   return res;
 }
