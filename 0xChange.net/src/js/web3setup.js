@@ -1,4 +1,4 @@
-const exchangeAddress = "0xa072446D08d09E399Cd7f2b64458AD5eb6DDFb45";
+const exchangeAddress = "0x5fDF6e14d7C3Fcdc7AfC5b36b16145Dd336f7308";
 var account = ""
 var tokenContract;
 var token;
@@ -395,6 +395,25 @@ var exchange = new web3.eth.Contract([
 		"name": "takeEth",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "_b",
+				"type": "bytes"
+			}
+		],
+		"name": "toUint256",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "pure",
 		"type": "function"
 	}
 ], exchangeAddress);

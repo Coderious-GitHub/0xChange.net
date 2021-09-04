@@ -274,8 +274,7 @@ function placeSellOrder() {
 
     amount = Math.round(amount * Math.pow(10, tokenDecimals));
 
-    //let bytesLimit = toBytes(limit);
-    var bytesLimit = web3.utils.numberToHex(limit)
+    var bytesLimit = web3.utils.toHex(limit);
     var hexLimit = "0x"
 
     for(i = 0; i< 64 - (bytesLimit.length - 2); i++)
